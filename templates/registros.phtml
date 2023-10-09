@@ -1,0 +1,415 @@
+<?php 
+	include 'header.phtml';
+?>
+	<div class="row page-titles">
+		<div class="col-md-5 align-self-center">
+			<h3 class="text-themecolor"><i class="mdi mdi-account-multiple"></i> Registros</h3>
+		</div>
+		<div class="col-md-7 align-self-center">
+			<div class="form-inline pull-right">
+				<div class="input-group input-group-sm">
+					<div class="input-group-prepend">
+						<span class="input-group-text"><i class="mdi mdi-qrcode fa-lg"></i></span>
+					</div>
+					<input type="text" class="form-control form-control-sm m-r-10" id="reg-code" placeholder="Escanee QR">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-body">
+						<button class="btn btn-primary pull-right" id="btnAdd" data-toggle="modal" data-target="#form-addRegistro"><i class="mdi mdi-account-plus"></i> Agregar</button>
+
+						<h4 class="card-title">Usuarios registrados</h4>
+
+						<h5 class="card-subtitle" id="counter"></h5>
+
+						<div class="table-responsive">
+							<table id="tbl-items" class="table table-hover table-striped">
+								<thead>
+									<tr>
+										<th class="text-center">ID</th>
+										<th class="text-center">Categoría</th>
+										<th>Correo</th>
+										<th>Nombre</th>
+										<th>Empresa</th>
+										<th>Teléfono</th>
+										<th>Status</th>
+										<th>Impreso</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="form-addRegistro" tabindex="-1" role="dialog" aria-labelledby="form-addRegistro" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Agregar registro</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+					</div>
+				<div class="modal-body">
+					<div class="mb-1 form-group row">
+						<div class="col-sm">
+							<label class="form-label fw-bolder fs-5" for="reg-categoria">Categoría</label>
+							<select class="form-control" id="reg-categoria">
+								<option value="PARTICIPANTE">PARTICIPANTE</option>
+								<option value="CONFERENCISTAS">CONFERENCISTAS</option>
+								<option value="PRENSA">PRENSA</option>
+							</select>
+						</div>
+					</div>
+					<div class="mb-1 form-group row">
+						<div class="col-sm">
+							<label class="form-label fw-bolder fs-5" for="reg-correo">Correo</label>
+							<input type="text" class="form-control" id="reg-correo">  
+						</div>  
+					</div>
+					<div class="mb-1 form-group row">
+						<div class="col-sm">
+							<label class="form-label fw-bolder fs-5" for="reg-nombre">Nombre</label>
+							<input type="text" class="form-control" id="reg-nombre"> 
+						</div>   
+					</div>
+					<div class="mb-1 form-group row">
+						<div class="col-sm">
+							<label class="form-label fw-bolder fs-5" for="reg-paterno">Apellido Paterno</label>
+							<input type="text" class="form-control" id="reg-paterno"> 
+						</div>   
+					</div>
+					<div class="mb-1 form-group row">
+						<div class="col-sm">
+							<label class="form-label fw-bolder fs-5" for="reg-materno">Apellido Materno</label>
+							<input type="text" class="form-control" id="reg-materno"> 
+						</div>   
+					</div>
+					<div class="mb-1 form-group row">
+						<div class="col-sm">
+							<label class="form-label fw-bolder fs-5" for="reg-empresa">Empresa</label>
+							<input type="text" class="form-control" id="reg-empresa">   
+						</div> 
+					</div>
+					<div class="mb-1 form-group row">
+						<div class="col-sm">
+							<label class="form-label fw-bolder fs-5" for="reg-telefono">Teléfono</label>
+							<input type="text" class="form-control" id="reg-telefono">
+						</div>    
+					</div>
+				</div>
+				<div class="modal-footer">
+					<input type="hidden" id="registro_id" value="0">
+					<button type="button" class="btn btn-success" id="btnSave" data-dismiss="modal">Guardar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="form-vcard" tabindex="-1" role="dialog" aria-labelledby="form-vcard" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+					<div class="modal-header">
+							<h5 class="modal-title"><i class="mdi mdi-account-card-details fa-lg"></i> <span></span></h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+						</div>
+				<div class="modal-body">
+					<div class="container-fluid">
+						<img src="#" alt="vCard" class="img-responsive img-thumbnail" id="img-vcard">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-info btnPrint" id="btnGafete"><i class="mdi mdi-printer fa-lg"></i> Imprimir Gafete</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<?php include 'footer.phtml';?>
+	<script type="text/javascript">
+		$(function() {
+			$('#mnu-user').addClass('active');
+			$apiUrl = '<?= URL_API ?>';
+			$count = 0;
+			$count2 = 0;
+
+			getUsuarios();
+			function getUsuarios() { 
+				blockPage();
+				cleanTable('tbl-items');
+				$('#tbl-items tbody').empty();
+				$.get($apiUrl+'registro/getAll/', function(resp) {
+					$.each(resp.result, function(index, item) { addUsuarioRow(item); $count++;});
+					const data = document.querySelector("#counter");
+					data.innerHTML = "<h6>"+$count+" registros, "+$count2+" checkIn</h6>";
+					data.textContent; 
+					createTable('tbl-items'); 
+					$.unblockUI();
+				});
+			}
+
+			$('#btnSave').click(function(){
+				id = $('#registro_id').val()
+				registro = {}
+                $.each($('#form-addRegistro input, #form-addRegistro select'), function(index, item){
+                    ide = $(item).attr('id').replace('reg-', '')
+                    registro[ide] = $(item).val()
+                })
+
+				if(id == 0){
+					$.post($apiUrl+'registro/add/', registro, function(resp){
+						if(resp.response){
+							getUsuarios()
+						}else{
+							toastr["error"]("¡Ocurrió un problema!", "No pudimos agregar el registro.")
+						}
+					},'json')
+				}else{
+					$.post($apiUrl+'registro/edit/'+id, registro, function(resp){
+						if(resp.response){
+							toastr['success']('¡Actualizado!', 'Registro actualizado con éxito')
+							getUsuarios()
+						}else{
+							toastr["error"]("¡Ocurrió un problema!", "No pudimos editar el registro.")
+						}
+					},'json')
+				}
+
+			})
+
+			$('#tbl-items').on('click', '.btnEdit', function(){
+				id = $(this).data('id')
+				$('#registro_id').val(id)
+				$.get($apiUrl+'/registro/get/'+id, function(resp){
+					$('#reg-categoria').val(resp.result.categoria)
+					$('#reg-correo').val(resp.result.correo)
+					$('#reg-nombre').val(resp.result.nombre)
+					$('#reg-paterno').val(resp.result.paterno)
+					$('#reg-materno').val(resp.result.materno)
+					$('#reg-empresa').val(resp.result.empresa)
+					$('#reg-telefono').val(resp.result.telefono)
+				})
+
+				$('#form-addRegistro').modal('show')
+			})
+
+			$('#tbl-items').on('click', '.btnDel', function(){
+				id = $(this).data('id')
+				swal({
+					title: "Eliminar",
+					text: "¿Seguro que deseas eliminar este registro?",
+					type: "warning",
+					showCancelButton: true,
+					cancelButtonText: "Cancelar",
+					confirmButtonColor: "#DD6B55",
+					confirmButtonText: "¡Eliminar!",
+					closeOnConfirm: false 
+				},function(){
+					$.post($apiUrl+'registro/del/'+id, function(response){
+						if(response.response){
+							swal("¡Hecho!",	"Registro eliminado con éxito", "success");
+							getUsuarios()
+						}else{
+							toastr["error"]("¡Ocurrió un problema!", "No pudimos eliminar el registro.")
+						}
+					},'json')
+				});
+
+			})
+
+			function addUsuarioRow(item) {
+				item.checkin!=null?$count2++:null;
+				container = $('#tbl-items tbody');
+				container.find('tr[data-id="'+item.id+'"]').remove();
+
+				codigo = item.id+'WEFI'+item.id;
+
+				tr = $('<tr data-id="'+item.id+'" ></tr>').appendTo(container);
+				tr.append('<td class="text-center"><small>'+item.id+'</small></td>');
+				tr.append('<td class="text-center"><small>'+item.categoria+'</small></td>');
+				tr.append('<td><small>'+item.correo+'</small></td>');
+				tr.append('<td><small class="nombre">'+item.nombre+' '+item.paterno+' '+item.materno+'</small></td>');
+				tr.append('<td><small>'+item.empresa+'</small></td>');
+				tr.append('<td><small>'+item.telefono+'</small></td>');
+				tr.append('<td><small>'+(item.status_registro!=null?item.status_registro:'')+'</small></td>');
+				tr.append('<td><small class="impresion">'+(item.impresion!=null?item.impresion:'--')+'</small></td>');
+
+				tda = $('<td class="text-center" data-id="'+item.id+'"></td>').appendTo(tr);
+				actions = $('<div></div>').appendTo(tda);
+				actions.append('<a href="#" data-popup="tooltip" title="Editar" class="btnEdit text-primary" data-id="'+item.id+'"><i class="mdi mdi-pencil fa-lg"></i></a> ');
+				actions.append('<a href="#" data-popup="tooltip" title="Imprimir" class="btnPrint text-info" data-id="'+item.id+'"><i class="mdi mdi-printer fa-lg"></i></a> ');
+				actions.append('<a href="#" data-popup="tooltip" title="Eliminar" class="btnDel text-danger" data-id="'+item.id+'"><i class="mdi mdi-eraser fa-lg"></i></a> ');
+			}
+
+			$('body').on('click', '.btnCheckin', function(e){
+				e.preventDefault();
+				id = $(this).parents('tr').data('id');
+				checked = $(this).parents('tr').find('.checkin').text();
+				nombre = $(this).parents('tr').find('.nombre').text();
+				btn = $(this);
+				if(id > 0 && checked == '--'){
+					swal({
+						title: "Llegada",
+						text: "¿Desea marcar la llegada de <strong class='font-weight-bold'>"+nombre+"</strong>? <br><small>No podrá revertir esta acción</small>",
+						type: "warning",
+						html: true,
+						showCancelButton: true,
+						cancelButtonText: "Cancelar",
+						confirmButtonColor: "#DD6B55",
+						confirmButtonText: "Si, CheckIn",
+						closeOnConfirm: true
+					}, function() {
+						blockPage();
+						$.ajax({
+							url: $apiUrl+'registro/checkin/'+id,
+							type: 'PUT',
+							dataType: 'json',
+							success: function(resp) {
+								if(resp.response) {
+									btn.parents('tr').find('.checkin').html(resp.checkin);
+									btn.remove();
+									printGafete(id);
+									swal({ type: "success", title: "¡Listo!", text: "Se marco la llegada", timer: 2000 });
+								}
+
+								$.unblockUI();
+							}
+						});
+					});
+				}
+			});
+
+			$('#reg-code').change(function(){ doCheckin(); });
+			$('#reg-code').keyup(function(e){ if(e.keyCode == 13 && $.trim($('#reg-code').val())) doCheckin(); });
+
+			function doCheckin(){
+				code = $.trim($('#reg-code').val());
+				if(code.length > 5){
+					arrCode = code.split('WEFI');
+					id = parseInt(arrCode[0]);
+					if(!isNaN(id) && id > 0){
+						blockPage();
+						$.ajax({
+							url: $apiUrl+'registro/checkin/'+id,
+							type: 'PUT',
+							dataType: 'json',
+							success: function(resp) {
+								if(resp.response) {
+									$('#tbl-items tr[data-id="'+id+'"]').find('.checkin').html(resp.checkin);
+									/* impreso = $('#tbl-items tr[data-id="'+id+'"]').find('.impresion').text();
+									if(impreso == '--') $('#tbl-items tr[data-id="'+id+'"]').find('.impresion').html(resp.checkin); */
+									$('#tbl-items tr[data-id="'+id+'"]').find('.btnCheckin').remove();
+									$('#reg-code').val('').focus();
+									printGafete(id);
+								}else{
+									swal({ type: "warning", title: "¡Oops!", text: resp.message, timer: 2000 });
+								}
+								$.unblockUI();
+							}
+						});
+					}
+				}
+			}
+
+			$('body').on('click', '.btnVCard', function(e){
+				e.preventDefault();
+				cod = $(this).data('codigo');
+				id = $(this).data('id');
+				url = '<?= URL_ROOT ?>/data/qr/'+cod+'_vcard.png';
+				$('#img-vcard').attr('src',url);
+				nom = $(this).parents('tr').find('td:eq(3)').text();
+				$('#btnGafete').data('id',id);
+				$('#form-vcard h5 span').html(nom);
+				$('#form-vcard').modal('show');
+			});
+
+			$('body').on('click', '.btnPrint', function(e){
+				e.preventDefault();
+				id = $(this).data('id');
+				impreso = $('#tbl-items tr[data-id="'+id+'"]').find('.impresion').text();
+				if(impreso == '--') $('#tbl-items tr[data-id="'+id+'"]').find('.impresion').html(moment().format('YYYY-MM-DD HH:mm:ss'));
+				// printGafete(id);
+				window.open('<?= URL_ROOT ?>/registro/print/'+id);
+			});
+
+			function cleanTable(tbl) {
+				if($.fn.dataTable.isDataTable('#'+tbl)) {
+					table = $('#'+tbl).DataTable();
+					table.destroy();
+				}
+				$("#nodata").remove();
+			}
+
+			function createTable(tbl, paging, arrColumns=null, filterTipo=null) {
+				container = $('<div class="form-inline pull-right" style="overflow: visible"></div>');
+				select = $('<select class="selectpicker" multiple data-selected-text-format="static" id="columns-'+tbl+'" title="Mostrar/Ocultar columnas" data-width="fit"></select>').appendTo(container);
+				opt = ['Categoría','Correo','Nombre','Empresa','Teléfono','Status','Impreso'];							
+				$.each(opt, function (index, value) { 
+					select.append('<option class="form-control-sm" value="'+index+'">'+value+'</option>');
+				});
+				select.selectpicker('val', arrColumns!=null? arrColumns: ['0', '1', '2', '3', '4', '5', '6', '11']);
+				searchContainer = $('<div class="input-group"></div>').appendTo(container);
+				search = $('<input type="text" id="bus" placeholder="Buscar usuario" class="form-control">').appendTo(searchContainer);
+				icon = $('<div class="input-group-append"></div>').appendTo(searchContainer);
+				icon.append('<button type="button" class="btn btn-secondary btn-sm" id="btn-bus"><i class="fa fa-search"></i></button>');
+
+				$('#'+tbl).dataTable({
+					scrollX: false,
+					paging: paging,
+					pagingType: "full_numbers",
+					dom: 'RlB<"#toolbar-'+tbl+'">frtip',
+					'order': [0, 'asc'], 
+					buttons: [{ extend: 'excelHtml5', autoFilter: true, className: 'btn btn-sm btn-secondary' }]
+				});
+
+				$('#toolbar-'+tbl).html(container);
+				$('#toolbar-'+tbl+' #bus').keyup(function(e) { $("#"+tbl+"_filter label input").val($.trim($(this).val())).trigger('keyup'); });
+				$("#toolbar-"+tbl+" #bus").on("search", function(evt) { $("#"+tbl+"_filter label input").val(undefined).trigger('keyup'); });
+				$("#toolbar-"+tbl+" #btn-bus").click(function(evt) { evt.preventDefault(); $("#"+tbl+"_filter label input").val($.trim($('#bus').val())).trigger('keyup'); });
+				select.on('changed.bs.select', function(e, index) { blockPage();
+					column = $('#'+tbl).DataTable().column(index);
+					column.visible(!column.visible());
+					$.unblockUI();
+				});
+
+				$("#"+tbl+"_filter label").hide();
+			}
+
+			function printGafete(id) {
+				impreso = $('#tbl-items tr[data-id="'+id+'"]').find('.impresion').text();
+				if(impreso == '--') $('#tbl-items tr[data-id="'+id+'"]').find('.impresion').html(moment().format('YYYY-MM-DD HH:mm:ss'));
+				var mywindow = window.open('<?= URL_ROOT ?>/registro/gafete/'+id);
+				var is_chrome = Boolean(mywindow.chrome);
+
+				if (is_chrome) {
+					setTimeout(function() {
+						mywindow.document.close();
+						mywindow.focus();
+						mywindow.print();
+						mywindow.close();
+					}, 250);
+				} else {
+					mywindow.document.close();
+					mywindow.focus();
+
+					mywindow.print();
+					mywindow.close();
+				}
+
+				return true;
+			}
+		});
+	</script>

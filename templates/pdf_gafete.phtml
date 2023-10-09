@@ -1,0 +1,43 @@
+<?php 
+
+    require_once('../public/core/tcpdf/config/lang/spa.php');
+    require_once('../public/core/tcpdf/tcpdf.php');
+
+    class MYPDF extends TCPDF {
+        public function Header() {}
+        public function Footer() {}
+    }
+
+    $pdf = new MYPDF('L', PDF_UNIT, array(100, 38), true, 'UTF-8', false);
+
+    $pdf->SetCreator('www.ddsmedia.net');
+    $pdf->SetAuthor('DDS.media');
+    $pdf->SetTitle('Gafete');
+    $pdf->SetSubject('');
+    $pdf->SetKeywords('');
+    $pdf->SetAutoPageBreak(false, 0);
+    $pdf->SetFillColor(254, 254, 254);
+    
+    $pdf->SetMargins(0, 0, 0, false);
+    $pdf->SetHeaderMargin(0);
+    $pdf->SetFooterMargin(0);
+    
+    $pdf->setPrintFooter(false);
+    $pdf->setPrintHeader(false);
+    
+    $pdf->AddPage();
+    
+    $pdf->SetY(5);
+    $pdf->SetFont(PDF_FONT_NAME_MAIN, 'B', 20);
+    $pdf->MultiCell(65,5, $data->nombre, 0, 'L', 0, 1);
+    $pdf->SetFont(PDF_FONT_NAME_MAIN, 'B', 18);
+    $pdf->MultiCell(65,5, $data->paterno, 0, 'L', 0, 1);
+    $pdf->setY(27);
+    $pdf->SetFont(PDF_FONT_NAME_MAIN, '', 12);
+    $pdf->MultiCell(65,0, $data->empresa, 0, 'L', 1, 0);
+    
+    $pdf->Image('../public/data/qr/'.$codigo.'.png', 65, 2, 34);
+
+    $pdf->Output('F');
+    exit();
+?>

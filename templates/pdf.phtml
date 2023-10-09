@@ -1,0 +1,58 @@
+<?php 
+
+    require_once('../public/core/tcpdf/config/lang/spa.php');
+    require_once('../public/core/tcpdf/tcpdf.php');
+
+    class MYPDF extends TCPDF {
+        public function Header() {}
+        public function Footer() {}
+    }
+
+    $pdf = new MYPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
+
+    $pdf->SetCreator('www.ddsmedia.net');
+    $pdf->SetAuthor('DDS.media');
+    $pdf->SetTitle('Confirmación');
+    $pdf->SetSubject('');
+    $pdf->SetKeywords('');
+    $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+    $pdf->SetFillColor(120, 120, 120);
+    $pdf->AddPage();
+
+    $pdf->Rect(0, 0, 215, 5, 'DF', array(252, 206, 8), array(252, 206, 8));
+    $pdf->Image('../public/assets/images/wef-banner.jpg', 5, 6, 200);
+    $pdf->SetY(18);
+    $pdf->Cell(55);
+    
+
+    $pdf->SetFont(PDF_FONT_NAME_MAIN, 'BI', 20);
+    $pdf->setY(69);
+    $pdf->Cell(200,7, '¡Qué alegría que ', 0, 0, 'C', 0, '', 0);
+    $pdf->Ln();
+    $pdf->Cell(200,7, 'nos acompañes!', 0, 0, 'C', 0, '', 0);
+    $pdf->SetFont(PDF_FONT_NAME_MAIN, 'B', 14);
+    $pdf->setXY(60,94);
+    $pdf->MultiCell(100,0, 'No podemos esperar para disfrutar juntos el próximo '.$data->asiste.' de marzo.', 0, 'C', 0, 0);
+    $pdf->setXY(34,114);
+    // $pdf->SetFont(PDF_FONT_NAME_MAIN, 'B', 15);
+    $pdf->MultiCell(150,0, 'La cita es a las 08:45 am en Camino Real Polanco, <a href="https://goo.gl/maps/7jg8pXqKuS99kquG9" target="_blank" rel="noopener noreferrer">Calz. Gral. Mariano Escobedo 700, Anzures, Miguel Hidalgo, 11590 Ciudad de México, CDMX</a>', 0, 'C', 0, 0,'','',true,0,true);
+    $pdf->setY(139);
+    $pdf->Cell(25);
+    $pdf->SetFont(PDF_FONT_NAME_MAIN, '', 12);
+    $pdf->setXY(34,187);
+    // $pdf->SetFont(PDF_FONT_NAME_MAIN, 'B', 16);
+    $pdf->MultiCell(150,0, '¡Psst! Presenta este código QR en el lugar de acreditación el día del evento.', 0, 'C', 0, 0);
+    $pdf->Image('../public/data/qr/'.$codigo.'.png', 90, 194, 40);
+    
+    $pdf->setY(260);
+    $pdf->SetFont(PDF_FONT_NAME_MAIN, '', 8);
+    $pdf->Cell(200,5, 'Correo registrado ', 0, 0, 'C', 0, '', 0);
+    $pdf->Ln();
+    $pdf->SetFont(PDF_FONT_NAME_MAIN, 'B', 9);
+    $pdf->Cell(200,5, $correo, 0, 0, 'C', 0, '', 0);
+
+    $pdf->Rect(0, 290, 215, 10, 'DF', array(252, 206, 8), array(252, 206, 8));
+
+    $pdf->Output('F');
+    exit();
+?>

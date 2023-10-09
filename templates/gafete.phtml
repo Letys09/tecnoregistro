@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gafete</title>
+    <link rel="stylesheet" type="text/css" href="<?=URL_ROOT?>/assets/plugins/bootstrap/css/bootstrap.min.css">
+    <style type="text/css" media="print">
+            body {
+                float: none !important;
+                width: auto !important;
+                margin:  0 !important;
+                padding: 0 !important;
+                font-size: 10pt;
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .nombre {
+                font-size: 20pt;
+            }
+
+            @media print {
+                @page {
+                    margin:0.7cm;
+                }
+                .oculto-impresion,
+                .oculto-impresion * {
+                    display: none !important;
+                }
+            }
+        </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-8">
+                <h1><?= $data->nombre.' '.$data->paterno.' '.$data->materno ?></h1>
+                <h3><?= $data->empresa ?></h3>
+            </div>
+            <div class="col-4">
+                <img src="<?= URL_ROOT.'/data/qr/'.$codigo.'_vcard.png' ?>" alt="vCard" style="max-width: 150px;">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
